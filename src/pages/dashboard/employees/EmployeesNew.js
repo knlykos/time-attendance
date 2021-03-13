@@ -99,13 +99,50 @@ const EmployeeNew = (): React.Node => {
       user
     );
   };
-  return <>
-  <Form>
-  <div style={{marginBottom: '2rem'}}>
-      <TextInput labelText="First Name" placeholder="First Name"></TextInput>
-  </div>
-  </Form>
-  </>;
+  return (
+    <>
+      <Form>
+        <div style={{ marginBottom: "2rem" }}>
+          <TextInput
+            labelText="First Name"
+            placeholder="First Name"
+            onChange={($e) => onChangeFName($e)}
+          ></TextInput>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <TextInput
+            labelText="Last Name"
+            placeholder="Last Name"
+            onChange={($e) => onChangeLName($e)}
+          ></TextInput>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <TextInput labelText="Email" placeholder="Email" ></TextInput>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <TextInput labelText="Phone Number" placeholder="Phone Number" ></TextInput>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <TextInput labelText="Alternative Number" placeholder="Alternative Number" ></TextInput>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <TextInput labelText="Business Title" placeholder="Business Title" ></TextInput>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <TextInput labelText="Time Type" placeholder="Type Time" ></TextInput>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <TextInput labelText="Street" placeholder="Street" ></TextInput>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <TextInput labelText="Apartment" placeholder="Apartment" ></TextInput>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <TextInput labelText="City" placeholder="City" ></TextInput>
+        </div>
+      </Form>
+    </>
+  );
 };
 
 export default EmployeeNew;

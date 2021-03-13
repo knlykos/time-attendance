@@ -10,7 +10,7 @@ function Login() {
   const [password, setPassword] = useState("");
   async function doLogin() {
     try {
-      const token = await axios.get("http://localhost:3001/user/login", {
+      const token = await axios.get("http://192.168.0.72:3001/user/login", {
         params: { username: username, password: password },
       });
       localStorage.setItem("token", token);

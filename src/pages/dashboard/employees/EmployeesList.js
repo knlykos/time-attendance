@@ -80,7 +80,7 @@ function EmployeeList(props: any): React.Node {
   const getEmployees = async () => {
     const emploeyees = await (
       await axios.get<any, AxiosResponse<Array<User>>>(
-        "http://localhost:3001/user/employees"
+        "http://192.168.0.72:3001/user/employees"
       )
     ).data;
     setEmployees(emploeyees);
