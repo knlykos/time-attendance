@@ -4,6 +4,9 @@ import * as React from "react";
 import type { User } from "./../../models/user";
 import { useState } from "react";
 import { Form, TextInput } from "carbon-components-react";
+import { Row } from "carbon-components-react/lib/components/Grid";
+import Grid from "carbon-components-react/lib/components/Grid/Grid";
+import Column from "carbon-components-react/lib/components/Grid/Column";
 
 // message: { newBtn: () => void; hola: string }
 const EmployeeNew = (): React.Node => {
@@ -101,46 +104,78 @@ const EmployeeNew = (): React.Node => {
   };
   return (
     <>
-      <Form>
-        <div style={{ marginBottom: "2rem" }}>
-          <TextInput
-            labelText="First Name"
-            placeholder="First Name"
-            onChange={($e) => onChangeFName($e)}
-          ></TextInput>
-        </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <TextInput
-            labelText="Last Name"
-            placeholder="Last Name"
-            onChange={($e) => onChangeLName($e)}
-          ></TextInput>
-        </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <TextInput labelText="Email" placeholder="Email" ></TextInput>
-        </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <TextInput labelText="Phone Number" placeholder="Phone Number" ></TextInput>
-        </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <TextInput labelText="Alternative Number" placeholder="Alternative Number" ></TextInput>
-        </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <TextInput labelText="Business Title" placeholder="Business Title" ></TextInput>
-        </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <TextInput labelText="Time Type" placeholder="Type Time" ></TextInput>
-        </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <TextInput labelText="Street" placeholder="Street" ></TextInput>
-        </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <TextInput labelText="Apartment" placeholder="Apartment" ></TextInput>
-        </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <TextInput labelText="City" placeholder="City" ></TextInput>
-        </div>
-      </Form>
+
+          <Column>
+            <Form>
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput
+                  labelText="First Name"
+                  placeholder="First Name"
+                  onChange={($e) => onChangeFName($e)}
+                ></TextInput>
+              </div>
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput
+                  labelText="Last Name"
+                  placeholder="Last Name"
+                  onChange={($e) => onChangeLName($e)}
+                ></TextInput>
+              </div>
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput labelText="Email" placeholder="Email"></TextInput>
+              </div>
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput
+                  labelText="Phone Number"
+                  placeholder="Phone Number"
+                ></TextInput>
+              </div>
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput
+                  labelText="Alternative Number"
+                  placeholder="Alternative Number"
+                ></TextInput>
+              </div>
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput
+                  labelText="Business Title"
+                  placeholder="Business Title"
+                ></TextInput>
+              </div>
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput
+                  labelText="Time Type"
+                  placeholder="Type Time"
+                ></TextInput>
+              </div>
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput labelText="Street" placeholder="Street"></TextInput>
+              </div>
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput
+                  labelText="Apartment"
+                  placeholder="Apartment"
+                ></TextInput>
+              </div>
+
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput labelText="City" placeholder="City"></TextInput>
+              </div>
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput labelText="Zip" placeholder="Zip"></TextInput>
+              </div>
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput labelText="State" placeholder="State"></TextInput>
+              </div>
+              <div style={{ marginBottom: "2rem" }}>
+                <TextInput
+                  labelText="Hire Date"
+                  placeholder="Hire Date"
+                ></TextInput>
+              </div>
+            </Form>
+          </Column>
+   
     </>
   );
 };
