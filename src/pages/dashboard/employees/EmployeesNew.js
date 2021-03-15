@@ -3,7 +3,15 @@ import axios from "axios";
 import * as React from "react";
 import type { User } from "./../../models/user";
 import { useState } from "react";
-import { Button, Form, TextInput } from "carbon-components-react";
+import {
+  Button,
+  DatePicker,
+  DatePickerInput,
+  Form,
+  Select,
+  SelectItem,
+  TextInput,
+} from "carbon-components-react";
 import { Row } from "carbon-components-react/lib/components/Grid";
 import Grid from "carbon-components-react/lib/components/Grid/Grid";
 import Column from "carbon-components-react/lib/components/Grid/Column";
@@ -73,8 +81,8 @@ const EmployeeNew = (): React.Node => {
     setState(e.currentTarget.value);
   };
 
-  const onChangeHireDate = (e: SyntheticEvent<HTMLInputElement>) => {
-    setHireDate(e.currentTarget.value);
+  const onChangeHireDate = (e) => {
+    setHireDate(e[0]);
   };
 
   const sendNewEmployee = async (
@@ -82,7 +90,6 @@ const EmployeeNew = (): React.Node => {
   ) => {
     e.preventDefault();
     const user: User = {
-      username: "",
       firstName: firstName,
       lastName: lastName,
       email: email,
@@ -98,10 +105,10 @@ const EmployeeNew = (): React.Node => {
       hireDate: new Date(hireDate),
     };
     console.log(user);
-    // const data = await axios.post(
-    //   "http://localhost:3001/user/new-employee",
-    //   user
-    // );
+    const data = await axios.post(
+      "http://localhost:3001/user/new-employee",
+      user
+    );
   };
   return (
     <>
@@ -122,8 +129,11 @@ const EmployeeNew = (): React.Node => {
             ></TextInput>
           </div>
           <div style={{ marginBottom: "2rem" }}>
-            <TextInput labelText="Email" placeholder="Email"
-                onChange={onChangeEmail}></TextInput>
+            <TextInput
+              labelText="Email"
+              placeholder="Email"
+              onChange={onChangeEmail}
+            ></TextInput>
           </div>
           <div style={{ marginBottom: "2rem" }}>
             <TextInput
@@ -147,14 +157,18 @@ const EmployeeNew = (): React.Node => {
             ></TextInput>
           </div>
           <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              onChange={onChangeTimeType}
-              labelText="Time Type"
-              placeholder="Type Time"
-            ></TextInput>
+            <Select defaultValue="0" helperText="Time Type">
+              <SelectItem text="Choose an option"></SelectItem>
+              <SelectItem text="Part-Time" value="0"></SelectItem>
+              <SelectItem text="Full-Time" value="1"></SelectItem>
+            </Select>
           </div>
           <div style={{ marginBottom: "2rem" }}>
-            <TextInput labelText="Street" placeholder="Street"></TextInput>
+            <TextInput
+              labelText="Street"
+              placeholder="Street"
+              onChange={onChangeStreet}
+            ></TextInput>
           </div>
           <div style={{ marginBottom: "2rem" }}>
             <TextInput
@@ -186,11 +200,18 @@ const EmployeeNew = (): React.Node => {
             ></TextInput>
           </div>
           <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              labelText="Hire Date"
-              placeholder="Hire Date"
+            <DatePicker
+              dateFormat="m/d/Y"
+              datePickerType="single"
               onChange={onChangeHireDate}
-            ></TextInput>
+            >
+              <DatePickerInput
+                id="date-picker-calendar-id"
+                placeholder="mm/dd/yyyy"
+                labelText="Date picker label"
+                type="text"
+              />
+            </DatePicker>
           </div>
           <Button onClick={sendNewEmployee}>SAVE</Button>
         </Form>

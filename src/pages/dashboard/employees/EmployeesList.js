@@ -5,10 +5,17 @@ import { useEffect, useState } from "react";
 // import { Form, Table } from "react-bootstrap";
 import type { User } from "./../../models/user";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
-import { User16, Delete, Save, Download } from "@carbon/icons-react/lib";
+import {
+  User16,
+  Delete16,
+  Save16,
+  Download16,
+  Edit16,
+} from "@carbon/icons-react/lib";
 import {
   Button,
   DataTable,
+  OverflowMenuItem,
   Table,
   TableBatchAction,
   TableBatchActions,
@@ -26,6 +33,7 @@ import {
   TableToolbarMenu,
   TableToolbarSearch,
 } from "carbon-components-react";
+import { OverflowMenu } from "carbon-components-react/lib/components/OverflowMenu/OverflowMenu";
 
 // import { DashboardTopBtn } from "../Dashboard";
 // message: { newBtn: () => void; hola: string }
@@ -77,6 +85,9 @@ function EmployeeList(props: any): React.Node {
   //     name: "New",
   //   };
 
+  const totalSelected = async (n: number) => {
+    console.log(n);
+  };
   const getEmployees = async () => {
     const emploeyees = await (
       await axios.get<any, AxiosResponse<Array<User>>>(
@@ -125,29 +136,39 @@ function EmployeeList(props: any): React.Node {
       }) => (
         <TableContainer title="DataTable">
           <TableToolbar>
-            <TableBatchActions {...getBatchActionProps()}>
+            {/* <TableBatchActions
+              {...getBatchActionProps()}
+              totalSelected={(e) => totalSelected(e)}
+            >
               <TableBatchAction
                 tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
-                renderIcon={Delete}
+                renderIcon={Edit16}
+                onClick={() => console.log("clicked")}
+              >
+                Edit
+              </TableBatchAction>
+              <TableBatchAction
+                tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
+                renderIcon={Delete16}
                 onClick={() => console.log("clicked")}
               >
                 Delete
               </TableBatchAction>
               <TableBatchAction
                 tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
-                renderIcon={Save}
+                renderIcon={Save16}
                 onClick={() => console.log("clicked")}
               >
                 Save
               </TableBatchAction>
               <TableBatchAction
                 tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
-                renderIcon={Download}
+                renderIcon={Download16}
                 onClick={() => console.log("clicked")}
               >
                 Download
               </TableBatchAction>
-            </TableBatchActions>
+            </TableBatchActions> */}
             <TableToolbarContent>
               <TableToolbarSearch
                 tabIndex={getBatchActionProps().shouldShowBatchActions ? -1 : 0}
@@ -155,7 +176,7 @@ function EmployeeList(props: any): React.Node {
                   console.log(e);
                 }}
               />
-              <TableToolbarMenu
+              {/* <TableToolbarMenu
                 tabIndex={getBatchActionProps().shouldShowBatchActions ? -1 : 0}
               >
                 <TableToolbarAction
@@ -170,7 +191,7 @@ function EmployeeList(props: any): React.Node {
                 <TableToolbarAction onClick={() => alert("Alert 3")}>
                   Action 3
                 </TableToolbarAction>
-              </TableToolbarMenu>
+              </TableToolbarMenu> */}
               <Button
                 tabIndex={getBatchActionProps().shouldShowBatchActions ? -1 : 0}
                 onClick={() => newEmployee()}
@@ -181,24 +202,35 @@ function EmployeeList(props: any): React.Node {
               </Button>
             </TableToolbarContent>
           </TableToolbar>
-          <Table {...getTableProps()}>
+          <Table {...getTableProps()} onInputChange={(e) => totalSelected(e)}>
             <TableHead>
               <TableRow>
-                <TableSelectAll {...getSelectionProps()} />
+                {/* <TableSelectAll {...getSelectionProps()} /> */}
                 {headers.map((header) => (
                   <TableHeader {...getHeaderProps({ header })}>
                     {header.header}
                   </TableHeader>
                 ))}
+                <TableHeader></TableHeader>
               </TableRow>
             </TableHead>
             <TableBody>
               {rows.map((row) => (
                 <TableRow key={row.id}>
-                  <TableSelectRow {...getSelectionProps({ row })} />
+                  {/* <TableSelectRow {...getSelectionProps({ row })} /> */}
                   {row.cells.map((cell) => (
                     <TableCell key={cell.id}>{cell.value}</TableCell>
                   ))}
+                  <OverflowMenu selectorPrimaryFocus={".optionTwo"} flipped={true} >
+                    <OverflowMenuItem itemText="Edit" />
+                    <OverflowMenuItem
+                      className="optionTwo"
+                      itemText="Option 2 is an example of a really long string and how we recommend handling this"
+                      requireTitle
+                    />
+                    <OverflowMenuItem itemText="Option 3" />
+                    <OverflowMenuItem itemText="Delete" hasDivider />
+                  </OverflowMenu>
                 </TableRow>
               ))}
             </TableBody>
