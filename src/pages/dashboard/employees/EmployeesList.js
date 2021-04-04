@@ -5,35 +5,6 @@ import { useEffect, useState } from "react";
 // import { Form, Table } from "react-bootstrap";
 import type { User } from "./../../models/user";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
-import {
-  User16,
-  Delete16,
-  Save16,
-  Download16,
-  Edit16,
-} from "@carbon/icons-react/lib";
-import {
-  Button,
-  DataTable,
-  OverflowMenuItem,
-  Table,
-  TableBatchAction,
-  TableBatchActions,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableSelectAll,
-  TableSelectRow,
-  TableToolbar,
-  TableToolbarAction,
-  TableToolbarContent,
-  TableToolbarMenu,
-  TableToolbarSearch,
-} from "carbon-components-react";
-import { OverflowMenu } from "carbon-components-react/lib/components/OverflowMenu/OverflowMenu";
 
 // import { DashboardTopBtn } from "../Dashboard";
 // message: { newBtn: () => void; hola: string }
@@ -84,14 +55,18 @@ function EmployeeList(props: any): React.Node {
   //     description: "Create new Employee",
   //     name: "New",
   //   };
-
+  function editEmployee(id: string) {
+    console.log(id);
+    // <Link to={`/dashboard/employees/edit/${v.id}`}>Edit</Link>
+    history.push(`/dashboard/employees/edit/${id}`);
+  }
   const totalSelected = async (n: number) => {
     console.log(n);
   };
   const getEmployees = async () => {
     const emploeyees = await (
       await axios.get<any, AxiosResponse<Array<User>>>(
-        "http://192.168.0.72:3001/user/employees"
+        "http://192.168.0.72:3001/employees/find-all"
       )
     ).data;
     setEmployees(emploeyees);
@@ -123,121 +98,17 @@ function EmployeeList(props: any): React.Node {
     );
   });
   const table = (
-    <DataTable rows={employees} headers={tableHeader}>
-      {({
-        rows,
-        headers,
-        getHeaderProps,
-        getTableProps,
-        getSelectionProps,
-        getBatchActionProps,
-        onInputChange,
-        selectedRows,
-      }) => (
-        <TableContainer title="DataTable">
-          <TableToolbar>
-            {/* <TableBatchActions
-              {...getBatchActionProps()}
-              totalSelected={(e) => totalSelected(e)}
-            >
-              <TableBatchAction
-                tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
-                renderIcon={Edit16}
-                onClick={() => console.log("clicked")}
-              >
-                Edit
-              </TableBatchAction>
-              <TableBatchAction
-                tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
-                renderIcon={Delete16}
-                onClick={() => console.log("clicked")}
-              >
-                Delete
-              </TableBatchAction>
-              <TableBatchAction
-                tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
-                renderIcon={Save16}
-                onClick={() => console.log("clicked")}
-              >
-                Save
-              </TableBatchAction>
-              <TableBatchAction
-                tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
-                renderIcon={Download16}
-                onClick={() => console.log("clicked")}
-              >
-                Download
-              </TableBatchAction>
-            </TableBatchActions> */}
-            <TableToolbarContent>
-              <TableToolbarSearch
-                tabIndex={getBatchActionProps().shouldShowBatchActions ? -1 : 0}
-                onChange={(e) => {
-                  console.log(e);
-                }}
-              />
-              {/* <TableToolbarMenu
-                tabIndex={getBatchActionProps().shouldShowBatchActions ? -1 : 0}
-              >
-                <TableToolbarAction
-                  primaryFocus
-                  onClick={() => alert("Alert 1")}
-                >
-                  Action 1
-                </TableToolbarAction>
-                <TableToolbarAction onClick={() => alert("Alert 2")}>
-                  Action 2
-                </TableToolbarAction>
-                <TableToolbarAction onClick={() => alert("Alert 3")}>
-                  Action 3
-                </TableToolbarAction>
-              </TableToolbarMenu> */}
-              <Button
-                tabIndex={getBatchActionProps().shouldShowBatchActions ? -1 : 0}
-                onClick={() => newEmployee()}
-                size="small"
-                kind="primary"
-              >
-                Add new
-              </Button>
-            </TableToolbarContent>
-          </TableToolbar>
-          <Table {...getTableProps()} onInputChange={(e) => totalSelected(e)}>
-            <TableHead>
-              <TableRow>
-                {/* <TableSelectAll {...getSelectionProps()} /> */}
-                {headers.map((header) => (
-                  <TableHeader {...getHeaderProps({ header })}>
-                    {header.header}
-                  </TableHeader>
-                ))}
-                <TableHeader></TableHeader>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.id}>
-                  {/* <TableSelectRow {...getSelectionProps({ row })} /> */}
-                  {row.cells.map((cell) => (
-                    <TableCell key={cell.id}>{cell.value}</TableCell>
-                  ))}
-                  <OverflowMenu selectorPrimaryFocus={".optionTwo"} flipped={true} >
-                    <OverflowMenuItem itemText="Edit" />
-                    <OverflowMenuItem
-                      className="optionTwo"
-                      itemText="Option 2 is an example of a really long string and how we recommend handling this"
-                      requireTitle
-                    />
-                    <OverflowMenuItem itemText="Option 3" />
-                    <OverflowMenuItem itemText="Delete" hasDivider />
-                  </OverflowMenu>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-    </DataTable>
+    <>
+      <button onClick={newEmployee}>New</button>
+      <table>
+        <tr>
+          {tableHeader.map((v) => (
+            <th>{v.header}</th>
+          ))}
+        </tr>
+        {tableElements}
+      </table>
+    </>
   );
   return <>{table}</>;
 }

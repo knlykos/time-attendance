@@ -3,18 +3,6 @@ import axios from "axios";
 import * as React from "react";
 import type { User } from "./../../models/user";
 import { useState } from "react";
-import {
-  Button,
-  DatePicker,
-  DatePickerInput,
-  Form,
-  Select,
-  SelectItem,
-  TextInput,
-} from "carbon-components-react";
-import { Row } from "carbon-components-react/lib/components/Grid";
-import Grid from "carbon-components-react/lib/components/Grid/Grid";
-import Column from "carbon-components-react/lib/components/Grid/Column";
 
 // message: { newBtn: () => void; hola: string }
 const EmployeeNew = (): React.Node => {
@@ -23,8 +11,10 @@ const EmployeeNew = (): React.Node => {
     description: "Create new Employee",
     name: "New",
   };
+  const token = localStorage.getItem("token");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
+  const [dateBirth, setDateBirth] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [altPhone, setAltPhone] = useState<string>("");
@@ -42,6 +32,11 @@ const EmployeeNew = (): React.Node => {
   const onChangeLName = (e: SyntheticEvent<HTMLInputElement>) => {
     setLastName(e.currentTarget.value);
   };
+
+  const onChangeDateBirth = (e: string) => {
+    setDateBirth(e[0]);
+  };
+
   const onChangeEmail = (e: SyntheticEvent<HTMLInputElement>) => {
     setEmail(e.currentTarget.value);
   };
@@ -92,6 +87,7 @@ const EmployeeNew = (): React.Node => {
     const user: User = {
       firstName: firstName,
       lastName: lastName,
+      dateBirth: dateBirth,
       email: email,
       phone: phoneNumber,
       secondPhone: altPhone,
@@ -106,116 +102,126 @@ const EmployeeNew = (): React.Node => {
     };
     console.log(user);
     const data = await axios.post(
-      "http://localhost:3001/user/new-employee",
-      user
+      "http://192.168.0.72:3001/employees/create",
+      user,
+      {
+        headers: {
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3N1ZXIiOiJOS09ERVgiLCJzdWJqZWN0IjoibmVmaS5sb3BleiIsImlkIjoiM2RiZDQ2MjctYjQzNy00ODExLThlZDQtZThiZDNkNjg5ZmZlIiwiZmlyc3ROYW1lIjpudWxsLCJsYXN0TmFtZSI6bnVsbCwicm9sZSI6MywiaWF0IjoxNjE2MTY4NDQ1fQ.zcy7Jjy_Ech719w2WqwkRRAdasMNb10g_wJR1vNHBxw",
+        },
+      }
     );
   };
   return (
     <>
-      <Column>
-        <Form>
-          <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              labelText="First Name"
-              placeholder="First Name"
-              onChange={($e) => onChangeFName($e)}
-            ></TextInput>
-          </div>
-          <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              labelText="Last Name"
-              placeholder="Last Name"
-              onChange={($e) => onChangeLName($e)}
-            ></TextInput>
-          </div>
-          <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              labelText="Email"
-              placeholder="Email"
-              onChange={onChangeEmail}
-            ></TextInput>
-          </div>
-          <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              labelText="Phone Number"
-              placeholder="Phone Number"
-              onChange={onChangePNumber}
-            ></TextInput>
-          </div>
-          <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              onChange={onChangeAltNumber}
-              labelText="Alternative Number"
-              placeholder="Alternative Number"
-            ></TextInput>
-          </div>
-          <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              onChange={onChangeBTitle}
-              labelText="Business Title"
-              placeholder="Business Title"
-            ></TextInput>
-          </div>
-          <div style={{ marginBottom: "2rem" }}>
-            <Select defaultValue="0" helperText="Time Type">
-              <SelectItem text="Choose an option"></SelectItem>
-              <SelectItem text="Part-Time" value="0"></SelectItem>
-              <SelectItem text="Full-Time" value="1"></SelectItem>
-            </Select>
-          </div>
-          <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              labelText="Street"
-              placeholder="Street"
-              onChange={onChangeStreet}
-            ></TextInput>
-          </div>
-          <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              onChange={onChangeApart}
-              labelText="Apartment"
-              placeholder="Apartment"
-            ></TextInput>
-          </div>
+      <form>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            labelText="First Name"
+            placeholder="First Name"
+            onChange={($e) => onChangeFName($e)}
+          ></input>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            labelText="Last Name"
+            placeholder="Last Name"
+            onChange={($e) => onChangeLName($e)}
+          ></input>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            type="date"
+            dateFormat="m/d/Y"
+            datePickerType="single"
+            onChange={onChangeDateBirth}
+            value={dateBirth}
+          ></input>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            labelText="Email"
+            placeholder="Email"
+            onChange={onChangeEmail}
+          ></input>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            labelText="Phone Number"
+            placeholder="Phone Number"
+            onChange={onChangePNumber}
+          ></input>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            onChange={onChangeAltNumber}
+            labelText="Alternative Number"
+            placeholder="Alternative Number"
+          ></input>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            onChange={onChangeBTitle}
+            labelText="Business Title"
+            placeholder="Business Title"
+          ></input>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <select defaultValue="0" helperText="Time Type">
+            <option text="Choose an option">Choose an option</option>
+            <option text="Part-Time" value="0">
+              Part-time
+            </option>
+            <option text="Full-Time" value="1">
+              Full-Time
+            </option>
+          </select>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            labelText="Street"
+            placeholder="Street"
+            onChange={onChangeStreet}
+          ></input>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            onChange={onChangeApart}
+            labelText="Apartment"
+            placeholder="Apartment"
+          ></input>
+        </div>
 
-          <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              labelText="City"
-              placeholder="City"
-              onChange={onChangeCity}
-            ></TextInput>
-          </div>
-          <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              labelText="Zip"
-              placeholder="Zip"
-              onChange={onChangeZip}
-            ></TextInput>
-          </div>
-          <div style={{ marginBottom: "2rem" }}>
-            <TextInput
-              labelText="State"
-              placeholder="State"
-              onChange={onChangeState}
-            ></TextInput>
-          </div>
-          <div style={{ marginBottom: "2rem" }}>
-            <DatePicker
-              dateFormat="m/d/Y"
-              datePickerType="single"
-              onChange={onChangeHireDate}
-            >
-              <DatePickerInput
-                id="date-picker-calendar-id"
-                placeholder="mm/dd/yyyy"
-                labelText="Date picker label"
-                type="text"
-              />
-            </DatePicker>
-          </div>
-          <Button onClick={sendNewEmployee}>SAVE</Button>
-        </Form>
-      </Column>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            labelText="City"
+            placeholder="City"
+            onChange={onChangeCity}
+          ></input>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            labelText="Zip"
+            placeholder="Zip"
+            onChange={onChangeZip}
+          ></input>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            labelText="State"
+            placeholder="State"
+            onChange={onChangeState}
+          ></input>
+        </div>
+        <div style={{ marginBottom: "2rem" }}>
+          <input
+            type="date"
+            onChange={onChangeHireDate}
+            value={hireDate}
+          ></input>
+        </div>
+        <button onClick={sendNewEmployee}>SAVE</button>
+      </form>
     </>
   );
 };

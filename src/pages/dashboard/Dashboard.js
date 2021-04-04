@@ -5,28 +5,11 @@
 
 import * as React from "react";
 import { render } from "react-dom";
-import Search20 from "@carbon/icons-react/lib/search/20";
-import Notification20 from "@carbon/icons-react/lib/notification/20";
-import AppSwitcher20 from "@carbon/icons-react/lib/app-switcher/20";
-import { User16 } from "@carbon/icons-react/lib";
-import HeaderContainer from "carbon-components-react/lib/components/UIShell/HeaderContainer";
-import {
-  Content,
-  Header,
-  HeaderMenuButton,
-  HeaderName,
-  HeaderGlobalBar,
-  HeaderGlobalAction,
-  SkipToContent,
-  SideNav,
-  SideNavItems,
-  SideNavLink,
-  SideNavMenu,
-  SideNavMenuItem,
-} from "carbon-components-react/lib/components/UIShell";
+
 import { Route, Switch, useRouteMatch } from "react-router";
 import Employees from "./employees/Employees";
 import { NavLink } from "react-router-dom";
+import ShiftPlanner from "./shift-planner/ShiftPlanner";
 const StoryContent = () => {
   const content = (
     <div className="bx--grid">
@@ -104,7 +87,7 @@ const StoryContent = () => {
     </div>
   );
 
-  return <Content id="main-content">{content}</Content>;
+  return <div id="main-content">{content}</div>;
 };
 const Fade16 = () => (
   <svg
@@ -121,99 +104,30 @@ const Dashboard = (): React.Node => {
   let { path, url } = useRouteMatch();
   return (
     <div className="container">
-      <HeaderContainer
-        render={({ isSideNavExpanded, onClickSideNavExpand }) => (
-          <>
-            <Header aria-label="NKODEX">
-              <SkipToContent />
-              <HeaderMenuButton
-                aria-label="Open menu"
-                onClick={onClickSideNavExpand}
-                isActive={isSideNavExpanded}
-              />
-              <HeaderName href="#" prefix="NKODEX">
-                Time & Attendance
-              </HeaderName>
-              <HeaderGlobalBar>
-                <HeaderGlobalAction aria-label="Search" onClick={() => {}}>
-                  <Search20 />
-                </HeaderGlobalAction>
-                <HeaderGlobalAction
-                  aria-label="Notifications"
-                  onClick={() => {}}
-                >
-                  <Notification20 />
-                </HeaderGlobalAction>
-                <HeaderGlobalAction
-                  aria-label="App Switcher"
-                  onClick={() => {}}
-                >
-                  <AppSwitcher20 />
-                </HeaderGlobalAction>
-              </HeaderGlobalBar>
-              <SideNav aria-label="Side navigation" expanded={false}>
-                <SideNavItems>
-                  <SideNavMenu renderIcon={User16} title="Employees">
-                    {/* <SideNavMenuItem href="javascript:void(0)"> */}
-                    <NavLink
-                      to={"/dashboard/employees"}
-                      className="bx--side-nav__link"
-                    >
-                      Employees
-                    </NavLink>
-                    {/* </SideNavMenuItem> */}
-                  </SideNavMenu>
-                  <SideNavMenu renderIcon={Fade16} title="Category title">
-                    <SideNavMenuItem href="javascript:void(0)">
-                      Link
-                    </SideNavMenuItem>
-                    <SideNavMenuItem
-                      aria-current="page"
-                      href="javascript:void(0)"
-                    >
-                      Link
-                    </SideNavMenuItem>
-                    <SideNavMenuItem href="javascript:void(0)">
-                      Link
-                    </SideNavMenuItem>
-                  </SideNavMenu>
-                  <SideNavMenu renderIcon={Fade16} title="Category title">
-                    <SideNavMenuItem href="javascript:void(0)">
-                      Link
-                    </SideNavMenuItem>
-                    <SideNavMenuItem
-                      aria-current="page"
-                      href="javascript:void(0)"
-                    >
-                      Link
-                    </SideNavMenuItem>
-                    <SideNavMenuItem href="javascript:void(0)">
-                      Link
-                    </SideNavMenuItem>
-                  </SideNavMenu>
-                  <SideNavLink renderIcon={Fade16} href="javascript:void(0)">
-                    Link
-                  </SideNavLink>
-                  <SideNavLink renderIcon={Fade16} href="javascript:void(0)">
-                    Link
-                  </SideNavLink>
-                </SideNavItems>
-              </SideNav>
-            </Header>
-            {/* <StoryContent /> */}
-            <Switch>
-              <Route exact path={path}>
-                <StoryContent />
-              </Route>
-              <Route path={`${path}/employees`}>
-                <Content id="main-content">
-                  <Employees />
-                </Content>
-              </Route>
-            </Switch>
-          </>
-        )}
-      />
+      <NavLink to={"/dashboard/employees"} className="bx--side-nav__link">
+        Employees
+      </NavLink>
+      {/* </SideNavMenuItem> */}
+
+      <NavLink to={"/dashboard/shift-planner"} className="bx--side-nav__link">
+        Shift Planner
+      </NavLink>
+
+      <Switch>
+        <Route exact path={path}>
+          <StoryContent />
+        </Route>
+        <Route path={`${path}/employees`}>
+          <div id="main-content">
+            <Employees />
+          </div>
+        </Route>
+        <Route path={`${path}/shift-planner`}>
+          <div id="main-content">
+            <ShiftPlanner />
+          </div>
+        </Route>
+      </Switch>
     </div>
   );
 };

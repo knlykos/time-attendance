@@ -1,6 +1,7 @@
 // @flow
 import * as React from "react";
 import { useHistory, useRouteMatch, Switch, Route } from "react-router-dom";
+import EmployeeEdit from "./EmployeesEdit";
 import EmployeeList from "./EmployeesList";
 import EmployeeNew from "./EmployeesNew";
 // import { DashboardTopBtn } from "../Dashboard";
@@ -9,6 +10,7 @@ import EmployeeNew from "./EmployeesNew";
 // import EmployeeEdit from "./EmployeeEdit";
 // message: { newBtn: () => void; hola: string }
 const Employees = (): React.Node => {
+  
   let { path, url } = useRouteMatch();
   const history = useHistory();
   //   const newBtn: DashboardTopBtn = {
@@ -36,7 +38,7 @@ const Employees = (): React.Node => {
                 <EmployeeNew />
                 {/* HOLA */}
               </Route>
-              <Route path={`${url}/edit/:id`}>{/* <EmployeeEdit /> */}</Route>
+              <Route path={`${url}/edit/:id`}>{ <EmployeeEdit /> }</Route>
             </Switch>
           </section>
         </div>
