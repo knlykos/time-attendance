@@ -68,32 +68,43 @@ export default class ShiftPlanner extends Component<Props, State> {
       };
     });
   }
+  /**
+   * consider the array by dates must to have the number of day to calculate the constrains by day
+  */
   resizeValidator(action: any, item: any, time: any, resizeEdge: any): any {
-    // console.log(action);
-    // console.log(item);
-    // console.log(resizeEdge);
-    // console.log(new Date(time));
+    // console.log(moment().startOf("day").valueOf());
     // console.log(new Date().getTime());
-    console.log(item.end);
-    console.log(moment(time).toDate());
-    // console.log(moment(item.end).add())
-    if (time < new Date().getTime()) {
-      // var newTime =
-      //   Math.ceil(new Date().getTime() / (15 * 60 * 1000)) * (15 * 60 * 1000);
-      var newTime = moment().startOf("day").add(13, "hours").toDate();
-      // console.log(moment(newTime));
-      return newTime;
+    // console.log("resizeEdge", resizeEdge);
+    // console.log("item", item);
+    const start = moment(item.start);
+    const end = moment(item.end);
+    const diff = end.diff(start, "hours");
+    // console.log(diff);
+    const timeShifted = moment(time).add(diff, "hours");
+    console.log("time", time);
+    console.log("timeShifted", timeShifted);
+    console.log(timeShifted.valueOf());
+    console.log(
+      timeShifted.valueOf() > moment().startOf("day").add(16, "hours").valueOf()
+    );
+    if (
+      timeShifted.valueOf() > moment().startOf("day").add(16, "hours").valueOf()
+    ) {
+      var newTime1 =
+        Math.ceil(
+          moment()
+            .startOf("day")
+            .add(24 - 16, "hours")
+            .valueOf() / 1000
+        ) * 1000;
+
+      return newTime1;
     }
-
-    // if (time > new Date().getTime()) {
-    //   var newTime = moment().startOf("day").add(24, "hours").toDate();
-    //   return newTime;
-    // }
-
+    // console.log(time);
     return time;
   }
   handleItemMove: any = (itemId: any, dragTime: any, newGroupOrder: any) => {
-    console.log(this.state);
+    // console.log(this.state);
     const { items, groups } = this.state;
 
     const group = groups[newGroupOrder];
@@ -110,7 +121,7 @@ export default class ShiftPlanner extends Component<Props, State> {
       ),
     });
 
-    console.log("Moved", itemId, dragTime, newGroupOrder);
+    // console.log("Moved", itemId, dragTime, newGroupOrder);
   };
 
   handleItemResize: any = (itemId: any, time: any, edge: any) => {
@@ -134,6 +145,7 @@ export default class ShiftPlanner extends Component<Props, State> {
     const { groups, items, defaultTimeStart, defaultTimeEnd } = this.state;
 
     return (
+      
       <Timeline
         groups={groups}
         items={items}
