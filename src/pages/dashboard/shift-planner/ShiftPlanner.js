@@ -2,6 +2,7 @@
 import "react-calendar-timeline/lib/Timeline.css";
 import axios, { AxiosResponse } from "axios";
 import type { User } from "./../../models/user";
+import { itemsData, availability } from "./Objects/data.js";
 
 import React, { Component } from "react";
 import moment from "moment";
@@ -11,12 +12,15 @@ import Timeline, {
   DateHeader,
 } from "react-calendar-timeline/lib";
 
-import { itemsData } from "./Objects/data";
 type State = {
   groups: any[],
   items: any[],
   defaultTimeEnd: Date,
   defaultTimeStart: Date,
+  itemsData: any[],
+  availability: any[],
+  itemSelected: any,
+  itemAvailability: any[],
 };
 type Props = { data: Date };
 var keys = {
@@ -47,7 +51,12 @@ export default class ShiftPlanner extends Component<Props, State> {
       items,
       defaultTimeEnd,
       defaultTimeStart,
+      itemsData,
+      availability,
+      itemAvailability: [],
+      itemSelected: {},
     };
+    // this.filterAvailabiliytById = this.filterAvailabiliytById.bind(this);
   }
   componentDidMount() {}
 
@@ -68,22 +77,34 @@ export default class ShiftPlanner extends Component<Props, State> {
       };
     });
   }
+
+  filterAvailabiliytById: any = (itemGroup: string) => {
+    console.log(this.state.availability);
+    const availability = this.state.availability.filter((v) => {
+      if (v.id === itemGroup) {
+        return v;
+      }
+    });
+    console.log(availability);
+  };
+
   /**
-   * consider the array by dates must to have the number of day to calculate the constrains by day
-  */
+   * consider the array by dates must have the day number of the week to calculate the constraints by day
+   */
   resizeValidator(action: any, item: any, time: any, resizeEdge: any): any {
     // console.log(moment().startOf("day").valueOf());
     // console.log(new Date().getTime());
     // console.log("resizeEdge", resizeEdge);
-    // console.log("item", item);
+    // console.log("item", item.group);
+    this.filterAvailabiliytById(item.group);
     const start = moment(item.start);
     const end = moment(item.end);
     const diff = end.diff(start, "hours");
     // console.log(diff);
     const timeShifted = moment(time).add(diff, "hours");
-    console.log("time", time);
-    console.log("timeShifted", timeShifted);
-    console.log(timeShifted.valueOf());
+    // console.log("time", time);
+    console.log("timeShifted", timeShifted.toDate());
+    // console.log(timeShifted.valueOf());
     console.log(
       timeShifted.valueOf() > moment().startOf("day").add(16, "hours").valueOf()
     );
@@ -94,13 +115,19 @@ export default class ShiftPlanner extends Component<Props, State> {
         Math.ceil(
           moment()
             .startOf("day")
-            .add(24 - 16, "hours")
+            .add(16 - diff, "hours")
             .valueOf() / 1000
         ) * 1000;
 
       return newTime1;
     }
-    // console.log(time);
+    if (time < moment().startOf("day").add(5, "hours").valueOf()) {
+      var newTime1 =
+        Math.ceil(moment().startOf("day").add(5, "hours").valueOf() / 1000) *
+        1000;
+
+      return newTime1;
+    }
     return time;
   }
   handleItemMove: any = (itemId: any, dragTime: any, newGroupOrder: any) => {
@@ -141,39 +168,58 @@ export default class ShiftPlanner extends Component<Props, State> {
     console.log("Resized", itemId, time, edge);
   };
 
+  handleItemSelected(itemId: any, e: any, time: any): void {
+    const groupSelected = this.state.itemsData.filter((v) => {
+      if (v.id === itemId) {
+        return v;
+      }
+    });
+    this.setState({
+      itemSelected: groupSelected[0],
+    });
+    console.log(groupSelected[0]);
+    this.filterAvailabiliytById(this.state.itemSelected.id);
+  }
+
   render(): any {
     const { groups, items, defaultTimeStart, defaultTimeEnd } = this.state;
 
     return (
-      
-      <Timeline
-        groups={groups}
-        items={items}
-        keys={keys}
-        sidebarContent={<div>Above The Left</div>}
-        itemsSorted
-        itemTouchSendsClick={false}
-        stackItems
-        itemHeightRatio={0.75}
-        showCursorLine
-        canMove={true}
-        canResize={true}
-        moveResizeValidator={this.resizeValidator}
-        defaultTimeStart={defaultTimeStart}
-        defaultTimeEnd={defaultTimeEnd}
-        onItemMove={this.handleItemMove}
-        onItemResize={this.handleItemResize}
-      >
-        <TimelineHeaders className="sticky">
-          <SidebarHeader>
-            {({ getRootProps }) => {
-              return <div {...getRootProps()}>Left</div>;
-            }}
-          </SidebarHeader>
-          <DateHeader unit="primaryHeader" />
-          <DateHeader />
-        </TimelineHeaders>
-      </Timeline>
+      <>
+        <Timeline
+          groups={groups}
+          items={items}
+          keys={keys}
+          sidebarContent={<div>Above The Left</div>}
+          itemsSorted
+          itemTouchSendsClick={false}
+          stackItems
+          itemHeightRatio={0.75}
+          showCursorLine
+          canMove={true}
+          canResize={true}
+          moveResizeValidator={this.resizeValidator.bind(this)}
+          defaultTimeStart={defaultTimeStart}
+          defaultTimeEnd={defaultTimeEnd}
+          onItemMove={this.handleItemMove}
+          onItemResize={this.handleItemResize}
+          onItemSelect={this.handleItemSelected.bind(this)}
+        >
+          <TimelineHeaders className="sticky">
+            <SidebarHeader>
+              {({ getRootProps }) => {
+                return <div {...getRootProps()}>Left</div>;
+              }}
+            </SidebarHeader>
+            <DateHeader unit="primaryHeader" />
+            <DateHeader />
+          </TimelineHeaders>
+        </Timeline>
+        <div>
+          <div>id: {this.state.itemSelected.group}</div>
+          <div>name: {this.state.itemSelected.title}</div>
+        </div>
+      </>
     );
   }
 }
