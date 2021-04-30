@@ -1,13 +1,14 @@
-//@flow
 import * as React from "react";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 // import { Form, Table } from "react-bootstrap";
-import type { User } from "./../../models/user";
+import type { User } from "../../models/user";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { Employee } from "../../models/employee";
+import { serverUrl } from "../../../config";
 
 // import { DashboardTopBtn } from "../Dashboard";
-// message: { newBtn: () => void; hola: string }
+// message: { newBtn: () => void; hola }
 
 const header = [
   {
@@ -15,11 +16,11 @@ const header = [
     header: "Username",
   },
   {
-    key: "firstName",
+    key: "firstname",
     header: "First Name",
   },
   {
-    key: "lastName",
+    key: "lastname",
     header: "Last Name",
   },
   {
@@ -45,8 +46,8 @@ const header = [
   },
 ];
 
-function EmployeeList(props: any): React.Node {
-  const [employees, setEmployees] = useState([]);
+function EmployeeList(props: any) {
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [tableHeader, setTableHeader] = useState(header);
   const history = useHistory();
   let { path, url } = useRouteMatch();
@@ -55,7 +56,7 @@ function EmployeeList(props: any): React.Node {
   //     description: "Create new Employee",
   //     name: "New",
   //   };
-  function editEmployee(id: string) {
+  function editEmployee(id: number) {
     console.log(id);
     // <Link to={`/dashboard/employees/edit/${v.id}`}>Edit</Link>
     history.push(`/dashboard/employees/edit/${id}`);
@@ -65,8 +66,8 @@ function EmployeeList(props: any): React.Node {
   };
   const getEmployees = async () => {
     const emploeyees = await (
-      await axios.get<any, AxiosResponse<Array<User>>>(
-        "http://192.168.0.72:3001/employees/find-all"
+      await axios.get<any, AxiosResponse<Employee[]>>(
+        `${serverUrl}/employees/find-all`
       )
     ).data;
     setEmployees(emploeyees);
@@ -83,8 +84,8 @@ function EmployeeList(props: any): React.Node {
   const tableElements = employees.map((v, i) => {
     return (
       <tr>
-        <td>{v.firstName}</td>
-        <td>{v.lastName}</td>
+        <td>{v.firstname}</td>
+        <td>{v.lastname}</td>
         <td>
           <div style={{ display: "flex" }}>
             <div>{v.username}</div>

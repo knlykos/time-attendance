@@ -1,4 +1,3 @@
-// @flow
 import "react-calendar-timeline/lib/Timeline.css";
 import axios, { AxiosResponse } from "axios";
 import type { User } from "./../../models/user";
@@ -10,19 +9,22 @@ import Timeline, {
   TimelineHeaders,
   SidebarHeader,
   DateHeader,
-} from "react-calendar-timeline/lib";
+} from "react-calendar-timeline";
+import { Employee } from "../../models/employee";
 
 type State = {
-  groups: any[],
-  items: any[],
-  defaultTimeEnd: Date,
-  defaultTimeStart: Date,
-  itemsData: any[],
-  availability: any[],
-  itemSelected: any,
-  itemAvailability: any[],
-  weeksAdvance: number,
-  weekDay: number,
+  groups: any[];
+  items: any[];
+  defaultTimeEnd: Date;
+  defaultTimeStart: Date;
+  itemsData: any[];
+  availability: any[];
+  itemSelected: any;
+  itemAvailability: any[];
+  weeksAdvance: number;
+  weekDay: number;
+  contextMenuVisibility: boolean;
+  newItem: { groupId: number; time: number };
 };
 type Props = { data: Date };
 var keys = {
@@ -38,31 +40,40 @@ var keys = {
   groupLabelKey: "title",
 };
 export default class ShiftPlanner extends Component<Props, State> {
+  firstDayOfWeek = moment().day(1).startOf("isoWeek").week(15);
+  lastDayOfWeek = moment(this.firstDayOfWeek).add(6, "days");
+  defaultTimeStart = this.firstDayOfWeek.toDate();
+  defaultTimeEnd = this.firstDayOfWeek.add(1, "day").toDate();
   constructor(props: { data: Date }) {
-    console.log(itemsData);
     super(props);
+    console.log(itemsData);
     this.getEmployees();
     let groups = [{ id: 1, title: "NEFI" }];
     let items = itemsData;
     console.log(items);
-    const firstDayOfWeek = moment().day(1).startOf("isoWeek").week(15);
-    const lastDayOfWeek = moment(firstDayOfWeek).add(6, "days");
-    const defaultTimeStart = firstDayOfWeek.toDate();
-    const defaultTimeEnd = firstDayOfWeek.add(1, "day").toDate();
+    // const firstDayOfWeek = moment().day(1).startOf("isoWeek").week(15);
+    // const lastDayOfWeek = moment(firstDayOfWeek).add(6, "days");
+    // const defaultTimeStart = firstDayOfWeek.toDate();
+    // const defaultTimeEnd = firstDayOfWeek.add(1, "day").toDate();
     // const weekDay = 1;
-    console.log(firstDayOfWeek);
-    console.log(lastDayOfWeek);
+    console.log(this.firstDayOfWeek);
+    console.log(this.lastDayOfWeek);
     this.state = {
       groups,
       items,
-      defaultTimeEnd,
-      defaultTimeStart,
+      defaultTimeEnd: this.defaultTimeEnd,
+      defaultTimeStart: this.defaultTimeStart,
       itemsData,
       availability,
       itemAvailability: [],
       itemSelected: {},
       weeksAdvance: 1, // Config
       weekDay: 1, // Config
+      contextMenuVisibility: false,
+      newItem: {
+        groupId: 0,
+        time: 0,
+      },
     };
     // this.filterAvailabiliytById = this.filterAvailabiliytById.bind(this);
   }
@@ -70,36 +81,64 @@ export default class ShiftPlanner extends Component<Props, State> {
 
   nextWeekDay() {
     let weekDay = this.state.weekDay;
-    if (weekDay <= 6) {
+    weekDay = weekDay + 1;
+    if (weekDay <= 7) {
       this.setState({
-        weekDay: weekDay + 1,
+        weekDay: weekDay,
+      });
+      this.setState({
+        defaultTimeStart: moment()
+          .startOf("isoWeek")
+          .add(this.state.weekDay, "day")
+          .toDate(),
+        defaultTimeEnd: moment()
+          .startOf("isoWeek")
+          .add(this.state.weekDay + 1, "day")
+          .toDate(),
       });
     }
-    this.setState({
-      defaultTimeStart: moment().startOf("isoWeek").add(weekDay).week(15),
-    });
-    console.log(this.state.weekDay);
+  }
+
+  backWeekDay() {
+    let weekDay = this.state.weekDay;
+    weekDay = weekDay - 1;
+    if (weekDay >= 1) {
+      this.setState({
+        weekDay: weekDay,
+      });
+      this.setState({
+        defaultTimeStart: moment()
+          .startOf("isoWeek")
+          .add(this.state.weekDay - 2, "day")
+
+          .toDate(),
+        defaultTimeEnd: moment()
+          .startOf("isoWeek")
+          .add(this.state.weekDay - 1, "day")
+          .toDate(),
+      });
+    }
   }
 
   async getEmployees() {
     const employees = await (
-      await axios.get<any, AxiosResponse<Array<User>>>(
+      await axios.get<any, AxiosResponse<Employee[]>>(
         "http://192.168.0.72:3001/employees/find-all"
       )
     ).data;
     this.setState({ groups: this.createGroups(employees) });
   }
 
-  createGroups(employees: User[]): any[] {
+  createGroups(employees: Employee[]): any[] {
     return employees.map((v) => {
       return {
         id: v.id,
-        title: v.firstName + " " + v.lastName,
+        title: v.firstname + " " + v.lastname,
       };
     });
   }
 
-  filterAvailabiliyById: any = (itemGroup: string) => {
+  filterAvailabiliyById: any = (itemGroup: any) => {
     const availability = this.state.availability.filter((v) => {
       console.log(v.id);
       console.log(itemGroup);
@@ -121,9 +160,11 @@ export default class ShiftPlanner extends Component<Props, State> {
 
     const weekDayWorking = moment(time).weekday();
     console.log(this.state.itemAvailability[0].data);
-    const availabilityData = this.state.itemAvailability[0].data.filter((v) => {
-      return v.type === 1;
-    });
+    const availabilityData = this.state.itemAvailability[0].data.filter(
+      (v: any) => {
+        return v.type === 1;
+      }
+    );
     console.log(availabilityData);
     // if (
     //   timeShifted.valueOf() > moment().startOf("day").add(16, "hours").valueOf()
@@ -202,22 +243,81 @@ export default class ShiftPlanner extends Component<Props, State> {
   }
 
   renderTags(): any {
-    const list = this.state.groups.map((v) => <li>{v.title}</li>);
+    const list = this.state.groups.map((v) => {
+      return (
+        <li>
+          {v.title}{" "}
+          <div>
+            <button>-</button>
+            <button>+</button>
+          </div>
+        </li>
+      );
+    });
     return list;
   }
 
+  onCanvasClick(groupId: any, time: any, e: any) {
+    console.log("groupId", groupId);
+    console.log("e", e);
+    console.log("time", time);
+    let { contextMenuVisibility } = this.state;
+    contextMenuVisibility = !contextMenuVisibility;
+    this.setState({
+      contextMenuVisibility: contextMenuVisibility,
+      newItem: { groupId: groupId, time: time },
+    });
+    // this.newItem();
+  }
+
+  // this function most to filter by group and date and employee time-type.
+  createItem() {
+    const { newItem } = this.state;
+    console.log(this.state.items);
+    const dataFiltered = this.state.items
+      .filter((v) => v.group === newItem.groupId)
+      .filter(
+        (v) => new Date(v.start).getDay() === new Date(newItem.time).getDay()
+      );
+    console.log(dataFiltered);
+  }
+
+  contextMenu() {
+    let { contextMenuVisibility } = this.state;
+    return (
+      <div style={{ visibility: contextMenuVisibility ? "visible" : "hidden" }}>
+        <button onClick={this.createItem.bind(this)}>+</button>
+      </div>
+    );
+  }
+
+  onCanvasContextMenu(itemId: any, e: any, time: any) {
+    console.log(itemId);
+    console.log(e);
+    console.log(time);
+  }
+
   render(): any {
-    const { groups, items, defaultTimeStart, defaultTimeEnd } = this.state;
+    const {
+      groups,
+      items,
+      defaultTimeStart,
+      defaultTimeEnd,
+      itemSelected,
+      weekDay,
+    } = this.state;
 
     return (
       <>
-        <button>Atras</button>
+        <button onClick={this.backWeekDay.bind(this)}>Atras</button>
         <button onClick={this.nextWeekDay.bind(this)}>Adelante</button>
+        {weekDay}
         <Timeline
           groups={groups}
           items={items}
           keys={keys}
           sidebarContent={<div>Above The Left</div>}
+          //@ts-ignore
           itemsSorted
           itemTouchSendsClick={false}
           stackItems
@@ -233,6 +333,8 @@ export default class ShiftPlanner extends Component<Props, State> {
           onItemSelect={this.handleItemSelected.bind(this)}
           visibleTimeStart={defaultTimeStart}
           visibleTimeEnd={defaultTimeEnd}
+          onCanvasContextMenu={this.onCanvasContextMenu.bind(this)}
+          onCanvasClick={this.onCanvasClick.bind(this)}
         >
           <TimelineHeaders className="sticky">
             <SidebarHeader>
@@ -244,9 +346,10 @@ export default class ShiftPlanner extends Component<Props, State> {
             <DateHeader />
           </TimelineHeaders>
         </Timeline>
+        <div>{this.contextMenu()}</div>
         <div>
-          <div>id: {this.state.itemSelected.group}</div>
-          <div>name: {this.state.itemSelected.title}</div>
+          <div>id: {itemSelected.group}</div>
+          <div>name: {itemSelected.title}</div>
         </div>
         <div>
           <h2>Employees</h2>

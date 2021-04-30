@@ -1,23 +1,29 @@
 //@flow
 import axios, { AxiosResponse } from "axios";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+  SyntheticEvent,
+  SelectHTMLAttributes,
+} from "react";
 
 // import type { User } from "./../../models/user";
-import type { Employee } from "./../../models/employee";
 
 import { useHistory, useParams } from "react-router";
+import { serverUrl } from "../../../config";
+import { Employee } from "../../models/employee";
 
 // message: { newBtn: () => void; hola: string }
 
-const EmployeeEdit = (): React.Node => {
+const EmployeeEdit = () => {
   const history = useHistory();
-  const { id } = useParams();
+  const { id } = useParams() as { id: string };
   console.log(id);
 
   const getEmployee = async (id: string) => {
     const emploeyee = await (
-      await axios.get<any, AxiosResponse<Array<Employee>>>(
+      await axios.get<any, AxiosResponse<Employee>>(
         `http://192.168.0.72:3001/employees/find-one?id=${id}`
       )
     ).data;
@@ -29,7 +35,7 @@ const EmployeeEdit = (): React.Node => {
   const onChangeFirstName = (e: SyntheticEvent<HTMLInputElement>) => {
     const val = e.currentTarget.value;
     setEmployee((prevState: Employee) => {
-      const employeeRes: Employee = { ...prevState, firstName: val };
+      const employeeRes: Employee = { ...prevState, firstname: val };
       return employeeRes;
     });
   };
@@ -37,18 +43,23 @@ const EmployeeEdit = (): React.Node => {
     getEmployee(id);
   }, []);
   const token = localStorage.getItem("token");
-  const [employee, setEmployee] = useState<Employee>({});
+  const [employee, setEmployee] = useState<Employee>({
+    email: "",
+    password: "",
+    username: "",
+    active: true,
+  });
 
   const onChangeLName = (e: SyntheticEvent<HTMLInputElement>) => {
     const val = e.currentTarget.value;
     setEmployee((prevState: Employee) => {
-      const employeeRes: Employee = { ...prevState, lastName: val };
+      const employeeRes: Employee = { ...prevState, lastname: val };
       return employeeRes;
     });
   };
 
-  const onChangeDateBirth = (e: string) => {
-    const val = e[0];
+  const onChangeDateBirth = (e: SyntheticEvent<HTMLInputElement>) => {
+    const val = e.currentTarget.value;
     setEmployee((prevState: Employee) => {
       const employeeRes: Employee = { ...prevState, dateBirth: new Date(val) };
       return employeeRes;
@@ -70,14 +81,6 @@ const EmployeeEdit = (): React.Node => {
     });
   };
 
-  const onChangeAltNumber = (e: SyntheticEvent<HTMLInputElement>) => {
-    const val = e.currentTarget.value;
-    setEmployee((prevState: Employee) => {
-      const employeeRes: Employee = { ...prevState, secondPhone: val };
-      return employeeRes;
-    });
-  };
-
   const onChangeBTitle = (e: SyntheticEvent<HTMLInputElement>) => {
     const val = e.currentTarget.value;
     setEmployee((prevState: Employee) => {
@@ -86,8 +89,9 @@ const EmployeeEdit = (): React.Node => {
     });
   };
 
-  const onChangeTimeType = (e: SyntheticEvent<HTMLInputElement>) => {
+  const onChangeTimeType = (e: SyntheticEvent<HTMLSelectElement>) => {
     const val = e.currentTarget.value;
+    console.log(val);
     setEmployee((prevState: Employee) => {
       const employeeRes: Employee = { ...prevState, timeType: Number(val) };
       return employeeRes;
@@ -134,8 +138,8 @@ const EmployeeEdit = (): React.Node => {
     });
   };
 
-  const onChangeHireDate = (e) => {
-    const val = e[0];
+  const onChangeHireDate = (e: SyntheticEvent<HTMLInputElement>) => {
+    const val = e.currentTarget.value;
     setEmployee((prevState: Employee) => {
       const employeeRes: Employee = { ...prevState, hireDate: new Date(val) };
       return employeeRes;
@@ -149,7 +153,7 @@ const EmployeeEdit = (): React.Node => {
 
     try {
       const data = await axios.put(
-        "http://192.168.0.72:3001/employees/edit",
+        `${serverUrl}/employees/edit`,
         employee,
         {
           headers: {
@@ -168,32 +172,27 @@ const EmployeeEdit = (): React.Node => {
       <form>
         <div style={{ marginBottom: "2rem" }}>
           <input
-            labelText="First Name"
             placeholder="First Name"
             onChange={($e) => onChangeFirstName($e)}
-            value={employee.firstName}
+            value={employee.firstname as string}
           ></input>
         </div>
         <div style={{ marginBottom: "2rem" }}>
           <input
-            labelText="Last Name"
             placeholder="Last Name"
             onChange={($e) => onChangeLName($e)}
-            value={employee.lastName}
+            value={employee.lastname as string}
           ></input>
         </div>
         <div style={{ marginBottom: "2rem" }}>
           <input
             type="date"
-            dateFormat="m/d/Y"
-            datePickerType="single"
             onChange={onChangeDateBirth}
-            value={employee.dateBirth}
+            value={employee.dateBirth?.toString()}
           ></input>
         </div>
         <div style={{ marginBottom: "2rem" }}>
           <input
-            labelText="Email"
             placeholder="Email"
             onChange={onChangeEmail}
             value={employee.email}
@@ -201,92 +200,78 @@ const EmployeeEdit = (): React.Node => {
         </div>
         <div style={{ marginBottom: "2rem" }}>
           <input
-            labelText="Phone Number"
             placeholder="Phone Number"
             onChange={onChangePNumber}
-            value={employee.phone}
+            value={employee.phone as string}
           ></input>
         </div>
-        <div style={{ marginBottom: "2rem" }}>
+        {/* <div style={{ marginBottom: "2rem" }}>
           <input
-            onChange={onChangeAltNumber}
-            labelText="Alternative Number"
+            onChange={onChangeAltNumber }
             placeholder="Alternative Number"
             value={employee.secondPhone}
           ></input>
-        </div>
+        </div> */}
         <div style={{ marginBottom: "2rem" }}>
           <input
             onChange={onChangeBTitle}
-            labelText="Business Title"
             placeholder="Business Title"
-            value={employee.businessTitle}
+            value={employee.businessTitle as string}
           ></input>
         </div>
         {employee.timeType}
         <div style={{ marginBottom: "2rem" }}>
           <select
             defaultValue="0"
-            helperText="Time Type"
-            value={employee.timeType}
+            value={employee.timeType as number}
             onChange={onChangeTimeType}
           >
             {/* <SelectItem text="Choose an option"></SelectItem> */}
-            <option text="Full-Time" value="1">
-              Full-Time
-            </option>
-            <option text="Part-Time" value="0">
-              Part-Time
-            </option>
+            <option value="1">Full-Time</option>
+            <option value="0">Part-Time</option>
           </select>
         </div>
         <div style={{ marginBottom: "2rem" }}>
           <input
-            labelText="Street"
             placeholder="Street"
             onChange={onChangeStreet}
-            value={employee.street}
+            value={employee.street as string}
           ></input>
         </div>
         <div style={{ marginBottom: "2rem" }}>
           <input
             onChange={onChangeApart}
-            labelText="Apartment"
             placeholder="Apartment"
-            value={employee.apartment}
+            value={employee.apartment as string}
           ></input>
         </div>
 
         <div style={{ marginBottom: "2rem" }}>
           <input
-            labelText="City"
             placeholder="City"
             onChange={onChangeCity}
-            value={employee.city}
+            value={employee.city as string}
           ></input>
         </div>
         <div style={{ marginBottom: "2rem" }}>
           <input
-            labelText="Zip"
             placeholder="Zip"
             onChange={onChangeZip}
-            value={employee.zipCode}
+            value={employee.zipCode as string}
           ></input>
         </div>
         <div style={{ marginBottom: "2rem" }}>
           <input
-            labelText="State"
             placeholder="State"
             onChange={onChangeState}
-            value={employee.state}
+            value={employee.state as string}
           ></input>
         </div>
         <div style={{ marginBottom: "2rem" }}>
           <input
-            dateFormat="m/d/Y"
-            datePickerType="single"
+            type="date"
             onChange={onChangeHireDate}
-            value={employee.hireDate}
+            value={employee.hireDate?.toString()}
           ></input>
         </div>
         <button onClick={sendEditedEmployee}>SAVE</button>

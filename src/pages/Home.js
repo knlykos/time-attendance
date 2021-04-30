@@ -4,7 +4,7 @@ function Home() {
   return (
     <div>
       <h3>
-        <Link to={"/Login"}>Go to Login</Link>
+        <Link to={"/login"}>Go to Login</Link>
       </h3>
     </div>
   );

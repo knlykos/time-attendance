@@ -6,6 +6,7 @@ export const itemsData = [
     title: "NEFI LOPEZ GARCIA",
     start: moment().startOf("day").add(6, "hours").toDate(),
     end: moment().startOf("day").add(15, "hours").toDate(),
+    timeType: 0,
     itemProps: {
       "data-tip": "NEFI LOPEZ GARCIA",
     },
@@ -23,11 +24,12 @@ export const itemsData = [
   {
     id: "3",
     group: "19579e64-fff9-457f-a267-3c96f1e2a21e",
-    title: "JOSEFA ORTIZ DE DOMINGUEZ",
+    title: "KIMBERLY SION CARRILLO",
     start: moment().startOf("day").add(8, "hours").toDate(),
     end: moment().startOf("day").add(12, "hours").toDate(),
+    timeType: 1,
     itemProps: {
-      "data-tip": "JOSEFA ORTIZ DE DOMINGUEZ",
+      "data-tip": "KIMBERLY SION CARRILLO",
     },
   },
 ];

@@ -1,5 +1,3 @@
-//@flow
-//@typ
 import logo from "./logo.svg";
 import "./App.css";
 import * as React from "react";
@@ -7,13 +5,14 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/dashboard/Dashboard";
+import SignUp from "./pages/Signup";
 // import 'bootstrap/dist/css/bootstrap.min.css';
 type Props = {
-  foo: number,
-  bar?: string,
+  foo: number;
+  bar?: any;
 };
-function App(props: Props): React.Node {
-  let hola: string = "";
+function App(props: Props) {
+  let hola = "";
 
   return (
     <Router>
@@ -24,6 +23,7 @@ function App(props: Props): React.Node {
         <Route path="/profile" render={() => <Profile />} /> */}
         <Route path="/dashboard" render={() => <Dashboard />} />
         {/* <Route path="/dashboard/users" exact render={() => <Dashboard />} /> */}
+        <Route path="/signup" render={() => <SignUp />} />
       </Switch>
     </Router>
   );

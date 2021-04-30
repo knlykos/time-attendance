@@ -8,8 +8,8 @@ import EmployeeNew from "./EmployeesNew";
 // import EmployeeList from "./EmployeeList";
 // import EmployeeNew from "./EmployeeNew";
 // import EmployeeEdit from "./EmployeeEdit";
-// message: { newBtn: () => void; hola: string }
-const Employees = (): React.Node => {
+// message: { newBtn: () => void; hola }
+const Employees = () => {
   
   let { path, url } = useRouteMatch();
   const history = useHistory();
@@ -27,9 +27,7 @@ const Employees = (): React.Node => {
   return (
     <>
       {/* CREAR UN COMPONENTE */}
-      <div className="bx--grid">
-        <div className="bx--row">
-          <section className="bx--offset-lg-3 bx--col-lg-13">
+
             <Switch>
               <Route exact path={`${url}`}>
                 <EmployeeList />
@@ -40,9 +38,7 @@ const Employees = (): React.Node => {
               </Route>
               <Route path={`${url}/edit/:id`}>{ <EmployeeEdit /> }</Route>
             </Switch>
-          </section>
-        </div>
-      </div>
+
     </>
   );
 };
